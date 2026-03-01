@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FALCO | Share Your Content</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#0a0a0f;--card:rgba(20,20,35,0.95);--cyan:#00f5ff;--magenta:#ff00ff;--purple:#8b5cf6;--text:#fff;--text2:#aaa}
+    body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 20% 20%,rgba(0,245,255,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,0,255,0.08) 0%,transparent 50%);z-index:-1}
+    nav{background:rgba(10,10,20,0.95);backdrop-filter:blur(20px);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,245,255,0.2);position:sticky;top:0;z-index:100}
+    .logo{font-size:1.8rem;font-weight:800;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+    .nav-links a{color:var(--text);text-decoration:none;margin-left:1.5rem;padding:0.5rem 1rem;border-radius:8px;transition:0.3s}
+    .nav-links a:hover{background:rgba(0,245,255,0.15)}
+    .btn-primary{background:linear-gradient(90deg,var(--cyan),var(--purple));color:#000;padding:0.6rem 1.5rem;border-radius:25px;text-decoration:none;font-weight:bold}
+    .container{max-width:800px;margin:2rem auto;padding:0 1rem}
+    .hero{text-align:center;padding:4rem 1rem}
+    .hero h1{font-size:3rem;margin-bottom:1rem}
+    .hero h1 span{background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{color:var(--text2);font-size:1.2rem;margin-bottom:2rem}
+    .auth-box{background:var(--card);border:1px solid rgba(0,245,255,0.2);border-radius:16px;padding:2rem;max-width:400px;margin:2rem auto}
+    .auth-box h2{text-align:center;margin-bottom:1.5rem}
+    input,textarea{width:100%;padding:1rem;margin-bottom:1rem;background:rgba(0,0,0,0.4);border:1px solid rgba(0,245,255,0.3);border-radius:8px;color:var(--text);font-size:1rem}
+    input:focus,textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 15px rgba(0,245,255,0.3)}
+    .btn{width:100%;padding:1rem;background:linear-gradient(90deg,var(--cyan),var(--purple));border:none;border-radius:8px;color:#000;font-size:1rem;font-weight:bold;cursor:pointer;transition:0.3s}
+    .btn:hover{transform:scale(1.02);box-shadow:0 0 25px rgba(0,245,255,0.5)}
+    .post{background:var(--card);border:1px solid rgba(0,245,255,0.1);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;transition:0.3s}
+    .post:hover{border-color:rgba(0,245,255,0.4);transform:translateY(-3px)}
+    .post-header{display:flex;align-items:center;margin-bottom:1rem}
+    .avatar{width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--magenta));display:flex;align-items:center;justify-content:center;font-weight:bold;margin-right:1rem}
+    .user-info h3{font-size:1rem}
+    .user-info span{font-size:0.8rem;color:var(--text2)}
+    .post-title{font-size:1.4rem;margin-bottom:0.8rem}
+    .post-content{color:var(--text2);white-space:pre-wrap;line-height:1.8}
+    .post-actions{display:flex;gap:1rem;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1)}
+    .action-btn{background:rgba(255,255,255,0.05);border:none;color:var(--text);padding:0.5rem 1rem;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:0.5rem;transition:0.3s}
+    .action-btn:hover{background:rgba(0,245,255,0.2)}
+    .action-btn.liked{background:rgba(255,0,100,0.3);color:#ff6b6b}
+    .share-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center}
+    .share-modal.active{display:flex}
+    .share-content{background:var(--card);padding:2rem;border-radius:16px;max-width:420px;text-align:center;border:1px solid rgba(0,245,255,0.3)}
+    .share-link{background:rgba(0,0,0,0.4);padding:0.8rem;border-radius:8px;word-break:break-all;margin-bottom:1rem;font-family:monospace;color:var(--cyan)}
+    .share-buttons{display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap}
+    .share-btn{padding:0.6rem 1.2rem;border-radius:8px;text-decoration:none;color:#fff;font-size:0.9rem}
+    .whatsapp{background:#25d366}.twitter{background:#1da1f2}.facebook{background:#4267b2}
+    .toast{position:fixed;bottom:20px;right:20px;background:linear-gradient(90deg,var(--cyan),var(--purple));color:#000;padding:1rem 2rem;border-radius:8px;font-weight:bold;transform:translateY(100px);transition:0.3s;z-index:1001}
+    .toast.show{transform:translateY(0)}
+    .hidden{display:none!important}
+    .section-title{font-size:1.8rem;margin-bottom:1.5rem}
+    .section-title span{background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .create-post-box{background:var(--card);border:1px solid rgba(0,245,255,0.2);border-radius:16px;padding:2rem;margin-bottom:2rem}
+    .profile-header{background:var(--card);border-radius:16px;padding:2rem;margin-bottom:2rem;text-align:center;border:1px solid rgba(0,245,255,0.2)}
+    .profile-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--magenta));margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:bold}
+    .profile-name{font-size:1.8rem;margin-bottom:0.5rem}
+    .profile-bio{color:var(--text2);margin-bottom:1rem}
+    .profile-stats{display:flex;justify-content:center;gap:2rem}
+    .profile-stat{text-align:center}
+    .profile-stat .number{font-size:1.5rem;font-weight:bold;color:var(--cyan)}
+    .empty-state{text-align:center;padding:3rem;color:var(--text2)}
+    .empty-state h3{font-size:1.5rem;margin-bottom:0.5rem;color:var(--text)}
+    @media(max-width:600px){.hero h1{font-size:2rem}.nav-links{display:none}}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="#" class="logo" onclick="showPage('home')">⚡ DREAM FALCON</a>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('explore')">Explore</a>
+    <span id="guestLinks">
+      <a href="#" onclick="showPage('login')">Login</a>
+      <a href="#" onclick="showPage('register')" class="btn-primary">Join</a>
+    </span>
+    <span id="userLinks" class="hidden">
+      <a href="#" onclick="showPage('create')">+ Create</a>
+      <a href="#" onclick="showPage('profile')">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div id="homePage">
+  <div class="container">
+    <div class="hero">
+      <h1>Welcome to <span>Dream Falcon's World</span></h1>
+      <p>Share your stories, poems, and ideas with the world</p>
+      <a href="#" onclick="showPage('register')" class="btn-primary" style="display:inline-block;">Get Started →</a>
+    </div>
+    <h2 class="section-title">Latest <span>Posts</span></h2>
+    <div id="postsContainer"></div>
+  </div>
+</div>
+
+<div id="explorePage" class="hidden">
+  <div class="container">
+    <h2 class="section-title">🔥 Trending</h2>
+    <div id="exploreContainer"></div>
+  </div>
+</div>
+
+<div id="loginPage" class="hidden">
+  <div class="container">
+    <div class="auth-box">
+      <h2>🔐 Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email">
+      <input type="password" id="loginPassword" placeholder="Password">
+      <button class="btn" onclick="login()">Login</button>
+      <p style="text-align:center;margin-top:1rem;color:#aaa;">Don't have account? <a href="#" onclick="showPage('register')" style="color:var(--cyan)">Register</a></p>
+    </div>
+  </div>
+</div>
+
+<div id="registerPage" class="hidden">
+  <div class="container">
+    <div class="auth-box">
+      <h2>🚀 Join NEXUS</h2>
+      <input type="text" id="regUsername" placeholder="Username">
+      <input type="email" id="regEmail" placeholder="Email">
+      <input type="password" id="regPassword" placeholder="Password">
+      <input type="text" id="regBio" placeholder="Bio (optional)">
+      <button class="btn" onclick="register()">Create Account</button>
+      <p style="text-align:center;margin-top:1rem;color:#aaa;">Already have account? <a href="#" onclick="showPage('login')" style="color:var(--cyan)">Login</a></p>
+    </div>
+  </div>
+</div>
+
+<div id="createPage" class="hidden">
+  <div class="container">
+    <div class="create-post-box">
+      <h2 class="section-title">✍️ Create Post</h2>
+      <input type="text" id="postTitle" placeholder="Title">
+      <textarea id="postContent" placeholder="Write your story, poem, or anything..." rows="10"></textarea>
+      <button class="btn" onclick="createPost()">🚀 Publish</button>
+    </div>
+  </div>
+</div>
+
+<div id="profilePage" class="hidden">
+  <div class="container">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">U</div>
+      <h2 class="profile-name" id="profileName">Username</h2>
+      <p class="profile-bio" id="profileBio">Bio here</p>
+      <div class="profile-stats">
+        <div class="profile-stat"><div class="number" id="profilePosts">0</div><div>Posts</div></div>
+        <div class="profile-stat"><div class="number" id="profileLikes">0</div><div>Likes</div></div>
+      </div>
+    </div>
+    <h2 class="section-title">My <span>Posts</span></h2>
+    <div id="myPostsContainer"></div>
+  </div>
+</div>
+
+<div id="postPage" class="hidden">
+  <div class="container">
+    <div id="singlePostContainer"></div>
+    <button onclick="showPage('home')" class="action-btn" style="margin-top:1rem;">← Back to Home</button>
+  </div>
+</div>
+
+<div class="share-modal" id="shareModal">
+  <div class="share-content">
+    <h3>🔗 Share Post</h3>
+    <p style="margin:1rem 0;color:var(--text2)">Copy link or share directly:</p>
+    <div class="share-link" id="shareLinkText">https://...</div>
+    <div class="share-buttons">
+      <a href="#" class="share-btn whatsapp" onclick="shareWhatsapp()">WhatsApp</a>
+      <a href="#" class="share-btn twitter" onclick="shareTwitter()">Twitter</a>
+      <a href="#" class="share-btn facebook" onclick="shareFacebook()">Facebook</a>
+    </div>
+    <button onclick="closeShareModal()" class="action-btn" style="margin-top:1rem;justify-content:center;">Close</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Success!</div>
+
+<script>
+// ===== DATA STORAGE =====
+let users = JSON.parse(localStorage.getItem('nexus_users')) || [];
+let posts = JSON.parse(localStorage.getItem('nexus_posts')) || [];
+let currentUser = JSON.parse(localStorage.getItem('nexus_currentUser')) || null;
+let currentSharePost = null;
+
+// ===== SAVE DATA =====
+function saveData() {
+  localStorage.setItem('nexus_users', JSON.stringify(users));
+  localStorage.setItem('nexus_posts', JSON.stringify(posts));
+  localStorage.setItem('nexus_currentUser', JSON.stringify(currentUser));
+}
+
+// ===== AUTH =====
+function register() {
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const bio = document.getElementById('regBio').value.trim();
+  
+  if(!username || !email || !password) return showToast('Please fill all fields');
+  if(users.find(u => u.email === email)) return showToast('Email already exists');
+  if(users.find(u => u.username === username)) return showToast('Username already taken');
+  
+  const user = { id: Date.now(), username, email, password, bio, likes: 0 };
+  users.push(user);
+  currentUser = user;
+  saveData();
+  showToast('🎉 Account created!');
+  updateAuthUI();
+  showPage('home');
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  
+  const user = users.find(u => u.email === email && u.password === password);
+  if(!user) return showToast('Invalid email or password');
+  
+  currentUser = user;
+  saveData();
+  showToast('✅ Welcome back!');
+  updateAuthUI();
+  showPage('home');
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('nexus_currentUser');
+  showToast('👋 Logged out');
+  updateAuthUI();
+  showPage('home');
+}
+
+function updateAuthUI() {
+  document.getElementById('guestLinks').classList.toggle('hidden', !!currentUser);
+  document.getElementById('userLinks').classList.toggle('hidden', !currentUser);
+}
+
+// ===== POSTS =====
+function createPost() {
+  if(!currentUser) return showToast('Please login first');
+  
+  const title
